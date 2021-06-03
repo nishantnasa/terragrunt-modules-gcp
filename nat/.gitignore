@@ -1,0 +1,19 @@
+# Mac
+.DS_Store
+
+# Module directories
+.terraform
+**/.terraform
+.terragrunt-cache
+**/.terragrunt-cache
+
+# Compiled files
+*.tfplan
+**/*.tfplan
+*.tfstate
+**/*.tfstate
+*.tfstate.backup
+**/*.tfstate.backup
+*.tfvars
+**/*.tfvars
+
