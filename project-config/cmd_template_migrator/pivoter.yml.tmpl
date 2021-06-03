@@ -1,0 +1,146 @@
+jobs:
+- sparkJob:
+    args:
+    - -e
+    - prod
+    - --input_path
+    - ''
+    - --input_type
+    - parquet
+    - --output_path
+    - ''
+    - --output_type
+    - parquet
+    - --csv_delimiter
+    - ','
+    - --partition_format
+    - yyyy-MM-dd
+    - --join_type
+    - left
+    - --decimal_as_double
+    - 'true'
+    - --file_included_sources
+    - na
+    - --file_included_features
+    - na
+    - --include_fuel
+    - 'true'
+    - --out_file_num
+    - '200'
+    - --file_feature_filter
+    - ''
+    - --no_subfolder
+    - 'false'
+    - --sparsity_uplimit
+    - '1'
+    jarFileUris:
+    - gs://${releaseBucketLocation}/spark-cmd2-pivoter/releases/cmd-2-tools-261d602.jar
+    - gs://${releaseBucketLocation}/spark-cmd2-pivoter/releases/deps/cmd-2-tools-fc1b970-deps.jar
+    mainClass: com.woolworths.de.cmd2.execution.Pivoter
+    properties:
+      spark.driver.extraJavaOptions: -Denv=prod
+      spark.executor.extraJavaOptions: -XX:+UseParallelGC -Denv=prod
+  stepId: pivot
+parameters:
+- fields:
+  - jobs['pivot'].sparkJob.args[3]
+  name: INPUT_PATH
+- fields:
+  - jobs['pivot'].sparkJob.args[5]
+  name: INPUT_TYPE
+- fields:
+  - jobs['pivot'].sparkJob.args[7]
+  name: OUTPUT_PATH
+- fields:
+  - jobs['pivot'].sparkJob.args[9]
+  name: OUTPUT_TYPE
+- fields:
+  - jobs['pivot'].sparkJob.args[11]
+  name: CSV_DELIMITER
+- fields:
+  - jobs['pivot'].sparkJob.args[13]
+  name: PARTITION_FORMAT
+- fields:
+  - jobs['pivot'].sparkJob.args[15]
+  name: JOIN_TYPE
+- fields:
+  - jobs['pivot'].sparkJob.args[17]
+  name: DECIMAL_AS_DOUBLE
+- fields:
+  - jobs['pivot'].sparkJob.args[19]
+  name: FILE_INCLUDED_SOURCES
+- fields:
+  - jobs['pivot'].sparkJob.args[21]
+  name: FILE_INCLUDED_FEATURES
+- fields:
+  - jobs['pivot'].sparkJob.args[23]
+  name: INCLUDE_FUEL
+  validation:
+    values:
+      values:
+      - 'false'
+      - 'true'
+- fields:
+  - jobs['pivot'].sparkJob.args[25]
+  name: OUT_FILE_NUM
+- fields:
+  - jobs['pivot'].sparkJob.args[27]
+  name: FILE_FEATURE_FILTER
+- fields:
+  - jobs['pivot'].sparkJob.args[29]
+  name: NO_SUBFOLDER
+- fields:
+  - jobs['pivot'].sparkJob.args[31]
+  name: SPARSITY_UPLIMIT
+placement:
+  managedCluster:
+    clusterName: prd-spark-cmd2-pivoter-261d602
+    config:
+      gceClusterConfig:
+        metadata:
+          hive-metastore-instance: wx-bq-poc:us-east4:hive-prod-metastore-us
+          use-cloud-sql-private-ip: 'false'
+        serviceAccountScopes:
+        - https://www.googleapis.com/auth/cloud-platform
+        zoneUri: "${zoneUri}"
+        subnetworkUri: "${subnetworkUri}"
+        serviceAccount: "${serviceAccount}"
+      initializationActions:
+      - executableFile: gs://${dataprocInitBucketLocation}/cloud-sql-proxy/cloud-sql-proxy.sh
+      - executableFile: gs://${dataprocInitBucketLocation}/ganglia/ganglia.sh
+      masterConfig:
+        diskConfig:
+          bootDiskSizeGb: 2000
+        machineTypeUri: n1-standard-8
+      softwareConfig:
+        imageVersion: 1.4.19-debian9
+        properties:
+          dataproc:dataproc.logging.stackdriver.job.driver.enable: 'true'
+          hive:hive.metastore.warehouse.dir: gs://wx-prod-hive/datasets
+          mapred:mapreduce.jobhistory.done-dir: gs://wx-lty-data-sync-hive-prod/mapreduce-history/done-dir
+          mapred:mapreduce.jobhistory.intermediate-done-dir: gs://wx-lty-data-sync-hive-prod/mapreduce-history/intermediate-done-dir
+          spark:hive.exec.dynamic.partition: 'true'
+          spark:hive.exec.dynamic.partition.mode: nonstrict
+          spark:spark.driver.memory: 20g
+          spark:spark.dynamicAllocation.enabled: 'false'
+          spark:spark.eventLog.dir: gs://wx-lty-data-sync-hive-prod/spark-history
+          spark:spark.executor.cores: '15'
+          spark:spark.executor.instances: '27'
+          spark:spark.executor.memory: 30g
+          spark:spark.executor.memoryOverhead: 14g
+          spark:spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version: '2'
+          spark:spark.history.fs.logDirectory: gs://wx-lty-data-sync-hive-prod/spark-history
+          spark:spark.hive.default.fileformat: parquet
+          spark:spark.memory.storageFraction: '0.3'
+          spark:spark.network.timeout: 5m
+          spark:spark.shuffle.service.enabled: 'true'
+          spark:spark.sql.sources.partitionOverwriteMode: STATIC
+          spark:spark.ui.killEnabled: 'true'
+      workerConfig:
+        diskConfig:
+          bootDiskSizeGb: 2000
+        machineTypeUri: n1-standard-16
+        numInstances: 27
+    labels:
+      env: prod
+      product: cmd-pivoter
