@@ -10,7 +10,7 @@ terraform {
 locals {
   project_apis = var.enable_apis ? flatten(jsondecode(var.activate_apis)) : []
   api_set = toset([ 
-    for api in project_apis:
+    for api in local.project_apis:
     api
     # prevent accidental update of service usage api
     if lower(api) != "serviceusage.googleapis.com" 
