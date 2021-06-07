@@ -16,7 +16,7 @@ variable "activate_apis" {
 variable "disable_services_on_destroy" {
   description = "Whether project services will be disabled when the resources are destroyed. https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_on_destroy"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "disable_dependent_services" {
