@@ -11,23 +11,11 @@ locals {
   api_set = var.enable_apis ? toset(distinct(flatten(jsondecode(var.activate_apis)))) : []
 }
 
-resource "google_project_service" "service_usage" {
-  project                    = var.project_id
-  service                    = "serviceusage.googleapis.com"
-  disable_on_destroy         = false
-  disable_dependent_services = false
-}
-
-
 resource "google_project_service" "cloud_resource_manager" {
   project                    = var.project_id
   service                    = "cloudresourcemanager.googleapis.com"
   disable_on_destroy         = false
   disable_dependent_services = false
-
-  depends_on = [
-    google_project_service.service_usage
-  ]
 }
 
 resource "google_project_service" "iam" {
