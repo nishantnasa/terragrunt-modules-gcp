@@ -8,7 +8,13 @@ terraform {
 }
 
 locals {
-  api_set = var.enable_apis ? toset(distinct(flatten(jsondecode(var.activate_apis)))) : []
+  project_apis = var.enable_apis ? flatten(jsondecode(var.activate_apis)) : []
+  api_set = toset([ 
+    for api in project_apis:
+    api
+    # prevent accidental update of service usage api
+    if lower(api) != "serviceusage.googleapis.com" 
+  ])
 }
 
 resource "google_project_service" "cloud_resource_manager" {
