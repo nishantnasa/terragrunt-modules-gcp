@@ -46,17 +46,6 @@ resource "google_project_service" "compute_engine" {
   ]
 }
 
-resource "google_project_service" "kubernetes_engine" {
-  project                    = var.project_id
-  service                    = "container.googleapis.com"
-  disable_on_destroy         = false
-  disable_dependent_services = false
-
-  depends_on = [
-    google_project_service.compute_engine
-  ]
-}
-
 resource "google_project_service" "project_services" {
   for_each                   = local.api_set
   project                    = var.project_id
@@ -65,6 +54,6 @@ resource "google_project_service" "project_services" {
   disable_dependent_services = var.disable_dependent_services
 
   depends_on = [
-    google_project_service.kubernetes_engine
+    google_project_service.compute_engine
   ]
 }
