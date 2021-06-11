@@ -23,7 +23,7 @@ resource "google_artifact_registry_repository_iam_member" "this" {
   provider    = google-beta
 
   location    = split("__", each.value.entity)[0]
-  repository  = "projects/gcp-wow-rwds-ai-mleops-prod/locations/${split("__", each.value.entity)[0]}/repositories/${split("__", each.value.entity)[1]}"
+  repository  = "projects/${var.project_id}/locations/${split("__", each.value.entity)[0]}/repositories/${split("__", each.value.entity)[1]}"
   role        = each.value.role
   member      = each.value.member
 }
