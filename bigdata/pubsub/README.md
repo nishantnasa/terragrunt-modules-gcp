@@ -84,7 +84,7 @@ module "pubsub" {
 
 ### Installation Dependencies
 
-- [Terraform](https://www.terraform.io/downloads.html) >= 0.13.0
+- [Terraform](https://www.terraform.io/downloads.html) >= 0.15.0
 - [terraform-provider-google](https://github.com/terraform-providers/terraform-provider-google) plugin >= v2.13
 
 ### Configure a Service Account
